@@ -1,0 +1,226 @@
+
+<div id="abc"><br/>
+ Please enter port number : <input type="text" id="portNum"> <input type="button" onclick="GetData()" value="GenerateCode"/>
+</div>
+
+<div id="mitra">
+  // Promise Version <br/>
+import { Injectable }              from '@angular/core';<br/>
+import { Http, Response }          from '@angular/http';<br/>
+import { Headers, RequestOptions } from '@angular/http';<br/>
+import { User, IUserModel } from '../../app-common/ServiceModel/model';<br/>
+
+import 'rxjs/add/operator/toPromise';<br/>
+
+@Injectable()<br/>
+export class CustomHttpService {<br/>
+  // URL to web api<br/>
+  public serviceUrl = 'http://localhost:58754/api/';<br/>
+<br/>
+  constructor (private http: Http) {}<br/>
+<br/>
+
+public getCall&ltT&gt(request: any):Promise&ltT&gt{<br/>
+ var url = this.BuildUrl(request);<br/>
+  return this.http.get(url)<br/>
+                    .toPromise()<br/>
+                    .then(i => &ltT&gti.json())<br/>
+                    .catch(this.handleError);<br/>
+}<br/>
+<br/>
+
+public postCall&ltT&gt (request: any): Promise&ltT&gt {<br/>
+    <br/>
+    let headers = new Headers({ 'Content-Type': 'application/json', "Accept":"application/json" });<br/>
+   <br/>
+    let options = new RequestOptions({ headers: headers });<br/>
+var url = this.BuildUrl(request);<br/>
+    return this.http.post(url, request.model, options)<br/>
+               .toPromise()<br/>
+               .then(i=>&ltT&gti.json())<br/>
+               .catch(this.handleError);<br/>
+  }<br/>
+
+<br/>
+
+public putCall&ltT&gt (request : any): Promise&ltT&gt {<br/>
+    return this.http.get(this.serviceUrl)<br/>
+                    .toPromise()<br/>
+                    .then(i=>&ltT&gt i.json())<br/>
+                    .catch(this.handleError);<br/>
+  }<br/>
+<br/>
+  public deleteCall&ltT&gt (request: any): Promise&ltT&gt {<br/>
+    let headers = new Headers({ 'Content-Type': 'application/json' });<br/>
+    let options = new RequestOptions({ headers: headers });<br/>
+<br/>
+    return this.http.post(this.serviceUrl, request, options)<br/>
+               .toPromise()<br/>
+               .then(i=>&ltT&gt i.json())<br/>
+               .catch(this.handleError);<br/>
+  }<br/>
+
+
+<br/>
+
+  private extractData(res: Response) {<br/>
+    let body = res.json();<br/>
+    return body || { };<br/>
+  }<br/>
+<br/>
+  private handleError (error: Response | any) {<br/>
+    // In a real world app, we might use a remote logging infrastructure<br/>
+    let errMsg: string;<br/>
+    if (error instanceof Response) {<br/>
+      const body = error.json() || '';<br/>
+      const err = body.error || JSON.stringify(body);<br/>
+      errMsg = `${error.status} - ${error.statusText || ''} ${err}`;<br/>
+    } else {<br/>
+      errMsg = error.message ? error.message : error.toString();<br/>
+    }<br/>
+    console.error(errMsg);<br/>
+    return Promise.reject(errMsg);<br/>
+  }<br/>
+
+<br/>
+public BuildUrl(requestParam : any): string{<br/>
+<br/>
+var url = this.serviceUrl + requestParam.apiUrl;<br/>
+  <br/>
+  var counter = 0;<br/>
+  for(var item  in requestParam){<br/>
+    counter= counter + 1;<br/>
+    if(item != 'apiUrl'){<br/>
+      if(counter == 1){<br/>
+      url = url + "?" + item+ "=" +requestParam[item]<br/>
+      }else{<br/>
+        url = url + "&" + item+ "=" +requestParam[item]<br/>
+      }<br/>
+    
+    }<br/>
+  }<br/>
+  <br/>
+return url;<br/>
+  }<br/>
+<br/>
+<div id="methodCode"></div>
+}<br/>
+</div>
+<br/>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js" ></script>
+<br/>
+
+<script>
+
+function GetData(){
+ var portNumber = $('#portNum').val();
+$.ajax({
+     type: 'GET',
+    url: "http://localhost:"+portNumber+"/swagger/docs/v1", success: function(result){
+        parseForm(result);
+    }});
+}
+
+$(document).ready(function(){
+
+})
+
+function parseForm(aa){
+var outPutMethod = "";
+var parse =  aa;
+$.each( parse.definitions, function( key, value ) {
+var a = "export interface I" + key+ "{ \n";
+$.each(value.properties, function(key1,value1){
+    a = a + key1 + " : " +returnType(value1) + '\n';
+} )
+a = a+ "} \n";
+$("#abc").append("<br/><pre><code>"+ a +"<code></pre>");
+});
+
+
+// writing method
+
+var parse1 =  parse;
+$.each(parse1.paths, function(key, value){
+var loc = "";
+
+if(value != undefined){
+
+  $.each(value, function(key, value){
+
+var apiController = value.tags != undefined ? "\'"+ value.tags[0] + "\'": ''; 
+//loc = "function " + value.operationId + " (";
+loc = "public " + value.operationId + "(";
+ var methodName = key;
+sendParameter = "let requestObject : any = {";
+
+var schema = value.responses['200'] != undefined ? value.responses['200'].schema : value.responses['204']
+
+var type = returnType(schema);
+
+type = type != undefined ?  "&lt"+ type +"&gt" : "&ltvoid&gt";
+var isVoid = type == undefined;
+
+$.each(value.parameters, function(key,value){
+
+ sendParameter = sendParameter  +"\""+value.name+"\"" +  " :"+ value.name + " , ";
+
+ loc = loc  +  (key == 0 ? "" : " ,") +  getParameter(key,value)
+
+})
+sendParameter =sendParameter+ "apiUrl : " + apiController + "};\n";
+
+
+
+ loc = loc + ") : Promise"+type +" \n{\n "+ sendParameter + "return this."+methodName+"Call"+ type+"(requestObject)\n};"
+//  $("#abc").append("<br/><br/><br/><pre><code>" +loc +"<code></pre>");
+
+outPutMethod += "<br/><pre><code>" +loc +"<code></pre>";
+})
+
+}
+
+})
+$("#methodCode").append(outPutMethod);
+}
+
+
+function  returnType(value){
+        if(value['type'] == 'integer')
+        return 'number';
+        if(value['type'] == 'string')
+        return 'string';
+        if(value['type'] == undefined && value.$ref !=undefined && value.$ref.split('definitions/') != null ){
+        return value.$ref.split('definitions/')[1];
+        }else if(value.schema != undefined && value.schema.$ref != undefined  && value.schema.$ref.split('definitions/') != null ){
+
+         return "I"+value.schema.$ref.split('definitions/')[1]
+        }else if(value!=undefined && value.in !==undefined && value.in == 'body'){
+            return "I"+value.schema.type;
+        }else if(value['type'] == 'array' && value.items != undefined && value.items.type == undefined && value.items.$ref.split('definitions/') != null)
+        {
+                return "I"+value.items.$ref.split('definitions/')[1];
+        }else if(value.items != undefined){
+            return value.items.type;
+        }
+    }
+
+
+function getParameter(key, param){
+if(param != undefined){
+ if(param.name !== undefined){
+     return  param.name +" : "+returnType(param) ;
+ }
+}
+}
+
+function removeCommaFromFirst(data){
+return (data.length && data[0] == ',') ? data.slice(1) : data;
+
+}
+
+
+
+</script>
+

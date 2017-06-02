@@ -1,0 +1,10 @@
+node_modules/
+.idea/
+dist/
+typings/
+reports/
+coverage/
+*.iml
+src/**/*.js
+src/**/*.js.map
+*.log

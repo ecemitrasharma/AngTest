@@ -1,0 +1,96 @@
+{
+    "metadata": {
+        "title": "SwaggerDemo",
+        "baseUrl": "http://localhost:58754/"
+    },
+    "services": {
+        "User": {
+            "User_GetUserData": {
+                "path": "/api/User",
+                "verb": "get",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "type": "query",
+                        "required": true,
+                        "dataType": {
+                            "primitive": "integer",
+                            "subType": "int32"
+                        }
+                    },
+                    {
+                        "name": "a",
+                        "type": "query",
+                        "required": true,
+                        "dataType": {
+                            "primitive": "integer",
+                            "subType": "int32"
+                        }
+                    },
+                    {
+                        "name": "b",
+                        "type": "query",
+                        "required": true,
+                        "dataType": {
+                            "primitive": "integer",
+                            "subType": "int32"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "dataType": {
+                            "primitive": "string"
+                        }
+                    }
+                }
+            },
+            "User_Put": {
+                "path": "/api/User",
+                "verb": "put",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "type": "query",
+                        "required": true,
+                        "dataType": {
+                            "primitive": "integer",
+                            "subType": "int32"
+                        }
+                    },
+                    {
+                        "name": "value",
+                        "type": "body",
+                        "required": true,
+                        "dataType": {
+                            "primitive": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {}
+                }
+            },
+            "User_Delete": {
+                "path": "/api/User",
+                "verb": "delete",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "type": "query",
+                        "required": true,
+                        "dataType": {
+                            "primitive": "integer",
+                            "subType": "int32"
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {}
+                }
+            }
+        }
+    },
+    "models": {},
+    "enums": {}
+}

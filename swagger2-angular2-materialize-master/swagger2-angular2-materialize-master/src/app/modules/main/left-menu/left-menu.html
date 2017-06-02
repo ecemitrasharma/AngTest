@@ -1,0 +1,26 @@
+<div class="col s3">
+    <ul class="collection with-header" id="apiList">
+        <li class="collection-header"><h5>{{apiDoc.info.title}}</h5></li>
+        <li>
+            <div class="input-field">
+                <i class="material-icons prefix">search</i>
+                <input type="text" [(ngModel)]="query" id="query"/>
+                <label class="active" for="query">Search api</label>
+            </div>
+        </li>
+        <ul class="collapsible" id="apiCollapsible" data-collapsible="expandable" materialize-collapsible>
+            <li *ngFor="let tag of apiDoc.tags;let i=index">
+                <div [class]="'collapsible-header white-text truncate ' + getThemeOption('mainClass')"><i class="material-icons">language</i>{{tag.description}}</div>
+                <div class="collapsible-body">
+                    <ul class="collection" materialize-collection>
+                        <li [ngStyle]="getSelectedTheme(apiPath, 'itemSelected')" class="collection-item"  *ngFor="let apiPath of apiDoc.paths | searchFiler:{name:query} | tagFiler:tag.name;let j=index">
+                            <a href="" (click)="onSelectApi($event,apiPath)">
+                                <div [class]="getTextColor(apiPath, 'itemTextColor')">{{apiPath.name}} <div [class]="'chip white-text '+ getThemeOption('fab-button')">{{apiPath.path.operations | count}}</div></div>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </li>
+        </ul>
+    </ul>
+</div>

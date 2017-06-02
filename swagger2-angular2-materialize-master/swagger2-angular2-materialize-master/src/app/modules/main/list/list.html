@@ -1,0 +1,27 @@
+<div class="row col s9">
+    <div class="col s12 m6" *ngFor="let operation of apiPath.path.operations;let i=index">
+        <div class="card">
+            <div class="card-panel" [ngClass]="operation.getMethodClass()">
+                <strong>{{operation.name}}</strong> {{operation.summary}}<br/>
+            </div>
+            <div class="card-content">
+                <p>{{operation.summary}} <span class="badge text-white" [hidden]="!operation.parameters">{{operation.parameters.length}} parameter(s)</span></p><br/>
+                <p><span>{{operation.description}}</span></p><br/>
+                <p>
+                    <input type="checkbox" (click)="$event.preventDefault()" class="filled-in" id="deprecatedBox" [checked]="operation.deprecated"/>
+                    <label for="deprecatedBox">Deprecated</label>
+                </p><br/>
+            </div>
+            <div class="card-action">
+                <button (click)="goToDetailPage($event,i)" class="btn waves-effect waves-light" [ngClass]="operation.getMethodClass()">
+                    <i class="material-icons left">swap_vert</i>Try api
+                </button>
+
+                <button (click)="chartModal.showGraph(operation)" class="btn waves-effect waves-light" [ngClass]="operation.getMethodClass()" *ngIf="hasStats(operation)">
+                    <i class="material-icons left">insert_chart</i>Stats
+                </button>
+            </div>
+        </div>
+    </div>
+    <chart-modal #chartModal></chart-modal>
+</div>

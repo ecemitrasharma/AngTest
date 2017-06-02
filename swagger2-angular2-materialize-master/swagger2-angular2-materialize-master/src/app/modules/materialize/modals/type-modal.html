@@ -1,0 +1,43 @@
+<div id="typeObjectModal" class="modal modal-fixed-footer">
+    <div class="modal-content">
+        <div class="col s12">
+            <a href="" (click)="selectBreadcrumb($event,i)" class="breadcrumb black-text" *ngFor="let entity of entityHistory;let i=index">{{entity}}</a>
+        </div>
+        <table class="responsive-table">
+            <thead>
+            <th>Name</th>
+            <th>Type</th>
+            <th>Description</th>
+            <th>Required</th>
+            </thead>
+            <tbody>
+                <tr class="collection" *ngFor="let property of properties">
+                    <td class="title">{{property.key}}</td>
+                    <td>
+                        <span *ngIf="isSimpleType(property)">{{property.value.type}}</span>
+                        <span *ngIf="hasDefinition(property)">
+                            <a href="" (click)="selectType($event,property,false)">{{apiDoc.getEntityName(property.value.$ref)}}</a>
+                        </span>
+                        <span *ngIf="isArrayDtoType(property)">
+                            [<a href="" (click)="selectType($event,property,false)">{{apiDoc.getEntityName(property.value.items.$ref)}}</a>]
+                        </span>
+                        <span *ngIf="isArraySimpleType(property)">
+                            [<span class="red-text">{{apiDoc.getEntityName(property.value.items.type)}}</span>]
+                        </span>
+                    </td>
+                    <td>{{definition.schema.getPropertyByName(property.key)}}</td>
+                    <td>
+                        <input title="Field required" [attr.id]="property.key" type="checkbox"
+                               [checked]="definition.isRequired(property.key)" class="filled-in" disabled/>
+                        <label [attr.for]="property.key"></label>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <div class="modal-footer">
+        <a href="" (click)="closeModal($event)" class="modal-action modal-close waves-effect waves-green btn-flat">
+            <i class="material-icons left">close</i> Close
+        </a>
+    </div>
+</div>
